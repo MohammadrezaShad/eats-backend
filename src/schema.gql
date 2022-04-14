@@ -1,0 +1,40 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input CreateAccountInput {
+  email: String!
+  password: String!
+  role: UserRole!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Mutation {
+  createAccount(createAccountInput: CreateAccountInput!): User!
+}
+
+"""Mongo object id scalar type"""
+scalar ObjectId
+
+type Query {
+  getUser: User!
+}
+
+type User {
+  _id: ObjectId!
+  createdAt: DateTime!
+  email: String!
+  password: String!
+  role: UserRole!
+  updatedAt: DateTime!
+}
+
+enum UserRole {
+  CLIENT
+  DELIVERY
+  OWNER
+}

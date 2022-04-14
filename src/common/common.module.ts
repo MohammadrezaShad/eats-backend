@@ -1,0 +1,7 @@
+import { ObjectIdScalar } from '@/scalar/object-id.scalar';
+import { Module } from '@nestjs/common';
+
+@Module({
+  providers: [],
+})
+export class CommonModule {}
