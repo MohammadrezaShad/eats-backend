@@ -9,6 +9,7 @@ import { CatsModule } from './cats/cats.module';
 import { RestaurantsModule } from './restaurants/restaurants.module';
 import { UsersModule } from './users/users.module';
 import { CommonModule } from './common/common.module';
+import { JwtModule } from './jwt/jwt.module';
 import * as Joi from 'joi';
 
 @Module({
@@ -21,6 +22,7 @@ import * as Joi from 'joi';
       validationSchema: Joi.object({
         NODE_ENV: Joi.string().valid('dev', 'prod').default('dev'),
         MONGO_URI: Joi.string().required(),
+        JWT_SECRET: Joi.string().required(),
       }),
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -31,6 +33,7 @@ import * as Joi from 'joi';
       playground: true,
     }),
     MongooseModule.forRoot(process.env.MONGO_URI),
+    JwtModule.forRoot(),
     CommonModule,
     UsersModule,
   ],

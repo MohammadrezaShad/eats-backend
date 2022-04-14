@@ -8,13 +8,30 @@ input CreateAccountInput {
   role: UserRole!
 }
 
+type CreateAccountOutput {
+  error: String
+  ok: Boolean!
+}
+
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
 
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+type LoginOutput {
+  error: String
+  ok: Boolean!
+  token: String
+}
+
 type Mutation {
-  createAccount(createAccountInput: CreateAccountInput!): User!
+  createAccount(createAccountInput: CreateAccountInput!): CreateAccountOutput!
+  login(loginInput: LoginInput!): LoginOutput!
 }
 
 """Mongo object id scalar type"""
