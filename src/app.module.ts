@@ -1,8 +1,13 @@
-import { ObjectIdScalar } from './scalar/object-id.scalar';
+import { ObjectIdScalar } from './common/scalar/object-id.scalar';
 import { ConfigModule } from '@nestjs/config';
 import { join } from 'path';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CatsModule } from './cats/cats.module';
@@ -11,6 +16,10 @@ import { UsersModule } from './users/users.module';
 import { CommonModule } from './common/common.module';
 import { JwtModule } from './jwt/jwt.module';
 import * as Joi from 'joi';
+import { JwtMiddleWare } from '@/jwt/jwt.middleware';
+import { AuthModule } from './auth/auth.module';
+import { MailModule } from './mail/mail.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
   imports: [
@@ -31,12 +40,29 @@ import * as Joi from 'joi';
       sortSchema: true,
       installSubscriptionHandlers: true,
       playground: true,
+      context: ({ req }) => ({ user: req['user'] }),
     }),
     MongooseModule.forRoot(process.env.MONGO_URI),
-    JwtModule.forRoot(),
+    JwtModule.forRoot({
+      privateKey: process.env.JWT_SECRET,
+    }),
+    MailModule.forRoot({
+      apiKey: process.env.MAILGUN_API_KEY,
+      domain: process.env.MAILGUN_DOMAIN_NAME,
+      fromEmail: process.env.MAILGUN_FROM_EMAIL,
+    }),
     CommonModule,
     UsersModule,
+    RestaurantsModule,
+    AuthModule,
   ],
   providers: [ObjectIdScalar],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(JwtMiddleWare).forRoutes({
+      path: '/graphql',
+      method: RequestMethod.ALL,
+    });
+  }
+}

@@ -4,8 +4,8 @@ import {
 } from '@/restaurants/entities/restaurant.entity';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { CreateRestaurantDto } from '@/restaurants/dtos/create-restaurant.dto';
-import { UpdateRestaurantDto } from '@/restaurants/dtos/update-restaurant.dto';
+import { CreateRestaurantInput } from '@/restaurants/dtos/create-restaurant.dto';
+import mongoose from 'mongoose';
 
 export class RestaurantsRepository {
   constructor(
@@ -13,15 +13,16 @@ export class RestaurantsRepository {
     private readonly restaurantsModel: Model<RestaurantDocument>,
   ) {}
 
-  create(createRestaurantDto: CreateRestaurantDto) {
+  create(
+    createRestaurantDto: CreateRestaurantInput,
+    ownerId: mongoose.Types.ObjectId,
+  ) {
     const restaurant = new this.restaurantsModel(createRestaurantDto);
+    restaurant.owner = ownerId;
     return restaurant.save();
   }
 
-  update(updateRestaurantDto: UpdateRestaurantDto) {
-    const { _id, data } = updateRestaurantDto;
-    return this.restaurantsModel.findByIdAndUpdate({ _id }, data, {
-      new: true,
-    });
+  findAll() {
+    return this.restaurantsModel.find().exec();
   }
 }

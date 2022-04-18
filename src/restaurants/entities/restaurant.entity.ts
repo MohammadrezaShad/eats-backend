@@ -1,14 +1,16 @@
+import { Category } from './category.entity';
 import { Field, ObjectType, InputType } from '@nestjs/graphql';
 import { Prop } from '@nestjs/mongoose';
-import { ObjectId } from 'mongodb';
-import { IsBoolean, IsOptional, IsString, Length } from 'class-validator';
+import { IsOptional, IsString, Length } from 'class-validator';
 import { Schema } from '@/common/decorators/schema.decorator';
 import { SchemaFactory } from '@/common/utils/schema-factory.util';
 import { Document } from '@/common/types/document.type';
 import { CoreEntity } from '@/common/entities/core.entity';
+import mongoose from 'mongoose';
+import { User } from '@/users/entities/user.entity';
 
-@InputType({ isAbstract: true })
-@ObjectType()
+@InputType('RestaurantInputType', { isAbstract: true })
+@ObjectType('')
 @Schema()
 export class Restaurant extends CoreEntity {
   @Field(type => String)
@@ -16,12 +18,6 @@ export class Restaurant extends CoreEntity {
   @IsString()
   @Length(3, 15)
   name: string;
-
-  @Field(type => Boolean, { defaultValue: false })
-  @Prop({ defaultValue: false })
-  @IsOptional()
-  @IsBoolean()
-  isVegan: boolean;
 
   @Field(type => String)
   @Prop()
@@ -31,18 +27,24 @@ export class Restaurant extends CoreEntity {
   @Field(type => String)
   @Prop()
   @IsString()
-  ownerName: string;
+  coverImg: string;
 
-  @Field(type => String)
-  @Prop()
+  @Field(() => Category, { nullable: true })
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Category',
+  })
   @IsString()
-  categoryName: string;
+  @IsOptional()
+  category: mongoose.Types.ObjectId;
 
-  @Field(type => Date)
-  createdAt: Date;
-
-  @Field(type => Date)
-  updatedAt: Date;
+  @Field(() => User)
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  })
+  @IsString()
+  owner: mongoose.Types.ObjectId;
 }
 
 export const RestaurantSchema = SchemaFactory(Restaurant);

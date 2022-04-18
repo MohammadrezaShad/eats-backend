@@ -2,6 +2,15 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Category {
+  _id: ObjectId!
+  coverImg: String!
+  createdAt: DateTime!
+  name: String!
+  restaurants: [Restaurant!]!
+  updatedAt: DateTime!
+}
+
 input CreateAccountInput {
   email: String!
   password: String!
@@ -13,10 +22,27 @@ type CreateAccountOutput {
   ok: Boolean!
 }
 
+input CreateRestaurantInput {
+  address: String!
+  categoryName: String!
+  coverImg: String!
+  name: String!
+}
+
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+input EditProfileInput {
+  email: String
+  password: String
+}
+
+type EditProfileOutput {
+  error: String
+  ok: Boolean!
+}
 
 input LoginInput {
   email: String!
@@ -31,7 +57,12 @@ type LoginOutput {
 
 type Mutation {
   createAccount(createAccountInput: CreateAccountInput!): CreateAccountOutput!
+  createRestaurant(createRestaurantDto: CreateRestaurantInput!): Restaurant!
+  editProfile(input: EditProfileInput!): EditProfileOutput!
   login(loginInput: LoginInput!): LoginOutput!
+  uploadFile(file: Upload!): Boolean!
+  uploadFiles(files: [Upload!]!): Boolean!
+  verifyEmail(input: VerifyEmailInput!): VerifyEmailOutput!
 }
 
 """Mongo object id scalar type"""
@@ -39,19 +70,51 @@ scalar ObjectId
 
 type Query {
   getUser: User!
+  userProfile(userId: Float!): UserProfileOutput!
 }
+
+type Restaurant {
+  _id: ObjectId!
+  address: String!
+  category: Category
+  coverImg: String!
+  createdAt: DateTime!
+  name: String!
+  owner: User!
+  updatedAt: DateTime!
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
 
 type User {
   _id: ObjectId!
   createdAt: DateTime!
   email: String!
+  isVerified: Boolean!
   password: String!
+  resturants: [Restaurant!]!
   role: UserRole!
   updatedAt: DateTime!
+}
+
+type UserProfileOutput {
+  error: String
+  ok: Boolean!
+  user: User
 }
 
 enum UserRole {
   CLIENT
   DELIVERY
   OWNER
+}
+
+input VerifyEmailInput {
+  code: String!
+}
+
+type VerifyEmailOutput {
+  error: String
+  ok: Boolean!
 }
