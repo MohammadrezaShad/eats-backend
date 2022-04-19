@@ -24,9 +24,10 @@ export class Restaurant extends CoreEntity {
   @IsString()
   address: string;
 
-  @Field(type => String)
-  @Prop()
+  @Field(type => String, { nullable: true })
+  @Prop({ required: false })
   @IsString()
+  @IsOptional()
   coverImg: string;
 
   @Field(() => Category, { nullable: true })

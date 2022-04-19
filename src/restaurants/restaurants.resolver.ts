@@ -3,7 +3,10 @@ import { Restaurant } from '@/restaurants/entities/restaurant.entity';
 import { Query, Resolver, Mutation } from '@nestjs/graphql';
 import { RestaurantsService } from './restaurants.service';
 import { Args } from '@nestjs/graphql';
-import { CreateRestaurantInput } from './dtos/create-restaurant.dto';
+import {
+  CreateRestaurantInput,
+  CreateRestaurantOutput,
+} from './dtos/create-restaurant.dto';
 import { GraphQLUpload, FileUpload } from 'graphql-upload';
 import * as fs from 'fs';
 import { finished } from 'stream/promises';
@@ -12,6 +15,7 @@ import { AuthUser } from '@/auth/auth-user.decorator';
 import { User } from '@/users/entities/user.entity';
 import mongoose from 'mongoose';
 import { UseGuards } from '@nestjs/common';
+import { Role } from '@/auth/role.decorator';
 
 @Resolver(of => Restaurant)
 export class RestaurantsResolver {
@@ -22,7 +26,6 @@ export class RestaurantsResolver {
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename }: FileUpload,
   ): Promise<boolean> {
-    console.log(filename);
     try {
       // Invoking the `createReadStream` will return a Readable Stream.
       // See https://nodejs.org/api/stream.html#stream_readable_streams
@@ -70,8 +73,14 @@ export class RestaurantsResolver {
     }
   }
 
+  @Query(() => [Restaurant])
+  async getRestaurants() {
+    return this.restaurantsService.findAllRestaurant();
+  }
+
   @UseGuards(AuthGuard)
-  @Mutation(returns => Restaurant)
+  @Role(['OWNER'])
+  @Mutation(returns => CreateRestaurantOutput)
   async createRestaurant(
     @Args('createRestaurantDto') createRestaurantDto: CreateRestaurantInput,
     @AuthUser() { _id }: User,

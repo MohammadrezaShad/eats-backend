@@ -7,7 +7,7 @@ import {
   Restaurant,
   RestaurantSchema,
 } from '@/restaurants/entities/restaurant.entity';
-import { RestaurantsRepository } from '@/restaurants/restaurants.repository';
+import { CategoriesRepository } from '@/restaurants/repositories/categories.respository';
 
 @Module({
   imports: [
@@ -16,6 +16,6 @@ import { RestaurantsRepository } from '@/restaurants/restaurants.repository';
       { name: Category.name, schema: CategorySchema },
     ]),
   ],
-  providers: [RestaurantsResolver, RestaurantsService, RestaurantsRepository],
+  providers: [RestaurantsResolver, RestaurantsService, CategoriesRepository],
 })
 export class RestaurantsModule {}

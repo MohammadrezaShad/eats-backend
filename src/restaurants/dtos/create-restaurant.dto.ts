@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb';
 import { CoreOutput } from '@/common/dtos/output.dto';
 import { Restaurant } from '@/restaurants/entities/restaurant.entity';
 import { PickType, InputType, ObjectType, Field } from '@nestjs/graphql';
@@ -13,4 +14,7 @@ export class CreateRestaurantInput extends PickType(Restaurant, [
 }
 
 @ObjectType()
-export class CreateRestaurantOutput extends CoreOutput {}
+export class CreateRestaurantOutput extends CoreOutput {
+  @Field(type => ObjectId)
+  restaurantId?: ObjectId;
+}

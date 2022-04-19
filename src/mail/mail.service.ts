@@ -43,7 +43,6 @@ export class MailService {
   }
 
   sendVerificationEmail(email: string, code: string) {
-    console.log(email, code);
     this.sendEmail('Verify Your Email', 'verify-email', [
       { key: 'code', value: code },
       { key: 'username', value: email },

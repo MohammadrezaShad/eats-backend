@@ -1,20 +1,41 @@
+import { CategoriesRepository } from './repositories/categories.respository';
 import mongoose from 'mongoose';
-import { RestaurantsRepository } from './restaurants.repository';
 import { Injectable } from '@nestjs/common';
-import { CreateRestaurantInput } from '@/restaurants/dtos/create-restaurant.dto';
+import {
+  CreateRestaurantInput,
+  CreateRestaurantOutput,
+} from '@/restaurants/dtos/create-restaurant.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import {
+  Restaurant,
+  RestaurantDocument,
+} from '@/restaurants/entities/restaurant.entity';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class RestaurantsService {
-  constructor(private readonly restaurantsReepository: RestaurantsRepository) {}
+  constructor(
+    @InjectModel(Restaurant.name)
+    private readonly restaurantsModel: Model<RestaurantDocument>,
+    private readonly categoriesRepository: CategoriesRepository,
+  ) {}
 
   async createRestaurant(
     createRestaurantDto: CreateRestaurantInput,
     ownerId: mongoose.Types.ObjectId,
-  ) {
+  ): Promise<CreateRestaurantOutput> {
+    const { categoryName } = createRestaurantDto;
+    const restaurant = new this.restaurantsModel(createRestaurantDto);
+    const category = await this.categoriesRepository.getOrCreate(categoryName);
+
+    restaurant.owner = ownerId;
+    restaurant.category = category._id as mongoose.Types.ObjectId;
+
     try {
-      await this.restaurantsReepository.create(createRestaurantDto, ownerId);
+      await restaurant.save();
       return {
         ok: true,
+        restaurantId: restaurant._id,
       };
     } catch (error) {
       return {
@@ -25,6 +46,6 @@ export class RestaurantsService {
   }
 
   async findAllRestaurant() {
-    return this.restaurantsReepository.findAll();
+    return this.restaurantsModel.find().exec();
   }
 }

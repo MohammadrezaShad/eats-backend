@@ -4,10 +4,11 @@
 
 type Category {
   _id: ObjectId!
-  coverImg: String!
+  coverImg: String
   createdAt: DateTime!
   name: String!
   restaurants: [Restaurant!]!
+  slug: String!
   updatedAt: DateTime!
 }
 
@@ -25,8 +26,14 @@ type CreateAccountOutput {
 input CreateRestaurantInput {
   address: String!
   categoryName: String!
-  coverImg: String!
+  coverImg: String
   name: String!
+}
+
+type CreateRestaurantOutput {
+  error: String
+  ok: Boolean!
+  restaurantId: ObjectId!
 }
 
 """
@@ -57,7 +64,7 @@ type LoginOutput {
 
 type Mutation {
   createAccount(createAccountInput: CreateAccountInput!): CreateAccountOutput!
-  createRestaurant(createRestaurantDto: CreateRestaurantInput!): Restaurant!
+  createRestaurant(createRestaurantDto: CreateRestaurantInput!): CreateRestaurantOutput!
   editProfile(input: EditProfileInput!): EditProfileOutput!
   login(loginInput: LoginInput!): LoginOutput!
   uploadFile(file: Upload!): Boolean!
@@ -69,6 +76,7 @@ type Mutation {
 scalar ObjectId
 
 type Query {
+  getRestaurants: [Restaurant!]!
   getUser: User!
   userProfile(userId: Float!): UserProfileOutput!
 }
@@ -77,7 +85,7 @@ type Restaurant {
   _id: ObjectId!
   address: String!
   category: Category
-  coverImg: String!
+  coverImg: String
   createdAt: DateTime!
   name: String!
   owner: User!

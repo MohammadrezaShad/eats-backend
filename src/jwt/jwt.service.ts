@@ -13,7 +13,6 @@ export class JwtService {
 
   verify(token: string) {
     try {
-      console.log({ token, key: this.options.privateKey });
       return jwt.verify(token, this.options.privateKey);
     } catch (error) {
       console.log(error);

@@ -14,15 +14,28 @@ import { Restaurant } from '@/restaurants/entities/restaurant.entity';
 @Schema()
 export class Category extends CoreEntity {
   @Field(type => String)
-  @Prop()
+  @Prop({
+    required: true,
+    unique: true,
+  })
   @IsString()
   @Length(3, 15)
   name: string;
 
-  @Field(type => String)
-  @Prop()
+  @Field(type => String, { nullable: true })
+  @Prop({
+    required: false,
+  })
   @IsString()
   coverImg: string;
+
+  @Field(type => String)
+  @Prop({
+    required: true,
+    unique: true,
+  })
+  @IsString()
+  slug: string;
 
   @Field(type => [Restaurant])
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant' }] })
