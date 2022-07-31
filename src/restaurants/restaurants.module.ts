@@ -8,6 +8,7 @@ import {
   RestaurantSchema,
 } from '@/restaurants/entities/restaurant.entity';
 import { CategoriesRepository } from '@/restaurants/repositories/categories.respository';
+import { UsersModule } from '@/users/users.module';
 
 @Module({
   imports: [

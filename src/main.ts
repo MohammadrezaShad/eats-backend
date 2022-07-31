@@ -10,7 +10,7 @@ import { join } from 'path';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  const PORT = process.env.PORT || 3000;
+  const PORT = process.env.PORT || 4000;
   const isDevelopment = process.env.NODE_ENV === 'dev';
 
   app.useStaticAssets(join(__dirname, '..', 'public', 'uploads'), {
